@@ -16,6 +16,7 @@ import * as Joi from 'joi';
       validationSchema: Joi.object({
         DATBASE_URL: Joi.string(),
         JWT_SECRET: Joi.string(),
+        PORT: Joi.number().default(3000),
       }),
     }),
     TodosModule,
