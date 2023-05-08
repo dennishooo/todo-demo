@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Status } from '@prisma/client';
-import { IsDateString, IsEnum, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { Todo } from 'src/todos/entities/todo.entity';
 
 export class User {
   @ApiProperty({ default: 1 })
@@ -22,4 +29,8 @@ export class User {
   //   @ApiProperty()
   @IsDateString()
   updatedAt: Date;
+
+  @ApiProperty({ type: [Todo] })
+  @IsArray()
+  todos: Todo[];
 }
