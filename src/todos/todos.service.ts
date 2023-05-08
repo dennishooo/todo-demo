@@ -13,12 +13,21 @@ export class TodosService {
   constructor(private prisma: PrismaService) {}
 
   async create(createTodoDto: CreateTodoDto) {
-    return await this.prisma.todo.create({ data: { ...createTodoDto } });
+    return await this.prisma.todo.create({
+      data: {
+        ...createTodoDto,
+      },
+    });
   }
 
   async findAll(query: TodoQuery) {
-    let { skip, take, status } = query;
-    return await this.prisma.todo.findMany({ skip, take, where: { status } });
+    let { skip, take, status, ...rest } = query;
+    return await this.prisma.todo.findMany({
+      orderBy: { ...rest },
+      skip,
+      take,
+      where: { status },
+    });
   }
 
   async findOne(id: number) {

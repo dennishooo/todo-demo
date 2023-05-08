@@ -1,6 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Status } from '@prisma/client';
-import { IsDateString, IsEnum, IsNumber, IsString } from 'class-validator';
+import { Prisma, Status } from '@prisma/client';
+import {
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class Todo {
   @ApiProperty({ default: 1 })
@@ -17,10 +23,12 @@ export class Todo {
 
   //   @ApiProperty()
   @IsDateString()
+  @IsOptional()
   createdAt: Date;
 
   //   @ApiProperty()
   @IsDateString()
+  @IsOptional()
   updatedAt: Date;
 
   @ApiPropertyOptional({ default: 1 })
