@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -17,6 +18,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Todo } from './entities/todo.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthRequest } from 'src/auth/entities/auth.entity';
+import { TodoQuery } from './dto/Todo-query.dto';
 
 @ApiTags('todos')
 @Controller('todos')
@@ -24,15 +26,17 @@ export class TodosController {
   constructor(private readonly todosService: TodosService) {}
 
   @ApiOkResponse({ description: 'todo', type: Todo })
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createTodoDto: CreateTodoDto) {
+  async create(@Req() req: AuthRequest, @Body() createTodoDto: CreateTodoDto) {
+    createTodoDto.ownerId = req.user.userId;
     return await this.todosService.create(createTodoDto);
   }
 
   @ApiOkResponse({ description: 'todo', type: Todo, isArray: true })
   @Get()
-  async findAll() {
-    return await this.todosService.findAll();
+  async findAll(@Query() todoQuery: TodoQuery) {
+    return await this.todosService.findAll(todoQuery);
   }
 
   @ApiOkResponse({ description: 'todo', type: Todo })
