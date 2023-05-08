@@ -13,7 +13,6 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
-import { Request as RequestType } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,13 +22,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@Request() req: RequestType, @Body() user: LoginUserDto) {
-    return this.authService.login(req.user);
+  async login(@Request() req: Express.Request, @Body() user: LoginUserDto) {
+    return await this.authService.login(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req: RequestType) {
+  getProfile(@Request() req: Express.Request) {
     return req.user;
   }
 }

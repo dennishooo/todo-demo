@@ -1,27 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { PrismaService } from 'nestjs-prisma';
 import { Prisma } from '@prisma/client';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class TodosService {
   constructor(private prisma: PrismaService) {}
 
-  create(createTodoDto: CreateTodoDto) {
-    return this.prisma.todo.create({ data: { ...createTodoDto } });
+  async create(createTodoDto: CreateTodoDto) {
+    return await this.prisma.todo.create({ data: { ...createTodoDto } });
   }
 
-  findAll() {
-    return this.prisma.todo.findMany();
+  async findAll() {
+    return await this.prisma.todo.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.todo.findUnique({ where: { id } });
+  async findOne(id: number) {
+    return await this.prisma.todo.findUnique({ where: { id } });
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto) {
-    return this.prisma.todo.update({
+  async update(id: number, username: string, updateTodoDto: UpdateTodoDto) {
+    let foundTodo = await this.prisma.todo.findUnique({
+      where: { id },
+      include: { owner: true },
+    });
+    if (!foundTodo) throw new NotFoundException('No Todo item found');
+    let owner = foundTodo.owner.username;
+    if (owner !== username)
+      throw new BadRequestException(
+        'User is only allowed to update own todo item',
+      );
+    return await this.prisma.todo.update({
       where: { id },
       data: {
         ...updateTodoDto,
@@ -29,7 +44,7 @@ export class TodosService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.todo.delete({ where: { id } });
+  async remove(id: number) {
+    return await this.prisma.todo.delete({ where: { id } });
   }
 }
