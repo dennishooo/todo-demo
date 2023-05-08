@@ -6,9 +6,22 @@ import { PrismaModule } from 'nestjs-prisma';
 import { LoggerMiddleWare } from './middleware/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 
 @Module({
-  imports: [PrismaModule.forRoot({ isGlobal: true }), TodosModule, AuthModule, UsersModule],
+  imports: [
+    PrismaModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        DATBASE_URL: Joi.string(),
+        JWT_SECRET: Joi.string(),
+      }),
+    }),
+    TodosModule,
+    AuthModule,
+    UsersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
