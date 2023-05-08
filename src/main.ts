@@ -9,6 +9,8 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('To Do App')
     .setDescription('API description')
+    .addBearerAuth()
+    .addSecurityRequirements('bearer')
     .setVersion('1.0')
     .build();
 

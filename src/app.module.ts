@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { TodosModule } from './todos/todos.module';
 import { PrismaModule } from 'nestjs-prisma';
 import { LoggerMiddleWare } from './middleware/logger.middleware';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [PrismaModule.forRoot({ isGlobal: true }), TodosModule],
+  imports: [PrismaModule.forRoot({ isGlobal: true }), TodosModule, AuthModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
