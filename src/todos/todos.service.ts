@@ -6,8 +6,6 @@ import {
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { PrismaService } from 'nestjs-prisma';
-import { Prisma } from '@prisma/client';
-import { NotFoundError } from 'rxjs';
 import { TodoQuery } from './dto/Todo-query.dto';
 
 @Injectable()
@@ -19,12 +17,7 @@ export class TodosService {
   }
 
   async findAll(query: TodoQuery) {
-    console.log(query);
-
     let { skip, take, status } = query;
-    if (typeof skip !== 'number') skip = parseInt(skip);
-    if (typeof take !== 'number') take = parseInt(take);
-
     return await this.prisma.todo.findMany({ skip, take, where: { status } });
   }
 
