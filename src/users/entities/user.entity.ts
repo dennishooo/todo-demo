@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Status } from '@prisma/client';
 import {
   IsArray,
   IsDateString,
-  IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
+  MinLength,
 } from 'class-validator';
 import { Todo } from 'src/todos/entities/todo.entity';
 
@@ -19,15 +19,18 @@ export class User {
   username: string;
 
   @ApiProperty({ default: 'HiLfx123!' })
-  @IsEnum(Status)
+  @IsString()
+  @MinLength(6)
   password: string;
 
-  //   @ApiProperty()
+  // @ApiProperty()
   @IsDateString()
+  @IsOptional()
   createdAt: Date;
 
-  //   @ApiProperty()
+  // @ApiProperty()
   @IsDateString()
+  @IsOptional()
   updatedAt: Date;
 
   @ApiProperty({ type: [Todo] })
