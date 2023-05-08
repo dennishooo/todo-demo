@@ -5,7 +5,7 @@ import { TodosModule } from './todos/todos.module';
 import { PrismaModule } from 'nestjs-prisma';
 
 @Module({
-  imports: [PrismaModule.forRoot(), TodosModule],
+  imports: [PrismaModule.forRoot({ isGlobal: true }), TodosModule],
   controllers: [AppController],
   providers: [AppService],
 })
