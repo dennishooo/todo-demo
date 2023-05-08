@@ -10,14 +10,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User{
+  id        Int      @default(autoincrement()) @id
+  username     String
+  password   String
+  todos Todo[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
 model Todo{
   id        Int      @default(autoincrement()) @id
   title     String
   status   Status
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
-  // author    User?    @relation(fields: [authorId], references: [id])
-  // authorId  Int?
+  owner    User?    @relation(fields: [onwerId], references: [id])
+  onwerId  Int?
 }
 
 enum Status {
