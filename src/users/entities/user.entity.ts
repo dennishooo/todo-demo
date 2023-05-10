@@ -35,5 +35,7 @@ export class User {
 
   @ApiProperty({ type: [Todo] })
   @IsArray()
-  todos: Todo[];
+  todos?: Todo[];
 }
+
+export type UserWithoutPassword = Omit<User, 'password'>;

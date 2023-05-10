@@ -4,9 +4,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { ConfigService } from '@nestjs/config';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
-
-// This should be a real class/interface representing a user entity
-export type User = any;
+import { User, UserWithoutPassword } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -17,26 +15,40 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const password = await bcrypt.hash(createUserDto.password, this.SALT_ROUND);
-
     return this.prisma.user.create({
       data: { username: createUserDto.username, password },
     });
   }
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({});
+  async findAll(): Promise<UserWithoutPassword[]> {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        createdAt: true,
+        updatedAt: true,
+        todos: true,
+      },
+    });
   }
 
   async findOne(username: string): Promise<User> {
     let foundUser = await this.prisma.user.findUnique({
       where: { username },
-      include: { todos: true },
+      include: {
+        todos: true,
+      },
     });
     if (!foundUser) throw new NotFoundException('No user found');
     return foundUser;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    if (updateUserDto.password)
+      updateUserDto.password = await bcrypt.hash(
+        updateUserDto.password,
+        this.SALT_ROUND,
+      );
     return this.prisma.user.update({
       where: { id },
       data: {
