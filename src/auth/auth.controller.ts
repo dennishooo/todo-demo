@@ -25,10 +25,4 @@ export class AuthController {
   async login(@Request() req: Express.Request, @Body() user: LoginUserDto) {
     return await this.authService.login(req.user);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req: Express.Request) {
-    return req.user;
-  }
 }
