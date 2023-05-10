@@ -19,13 +19,24 @@ import { Todo } from './entities/todo.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthRequest } from 'src/auth/entities/auth.entity';
 import { TodoQuery } from './dto/Todo-query.dto';
+import {
+  BadRequest,
+  NotFound,
+  Unauthorized,
+} from 'src/exception/exception.decorator';
 
+@Unauthorized()
 @ApiTags('todos')
 @Controller('todos')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
 
-  @ApiOkResponse({ description: 'todo', type: Todo })
+  @ApiOkResponse({
+    description: 'The todo item has been successfully created.',
+    type: Todo,
+  })
+  @BadRequest('todo item')
+  @NotFound('todo item')
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Req() req: AuthRequest, @Body() createTodoDto: CreateTodoDto) {
@@ -40,12 +51,18 @@ export class TodosController {
   }
 
   @ApiOkResponse({ description: 'todo', type: Todo })
+  @NotFound('todo item')
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.todosService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.todosService.findOne(id);
   }
 
-  @ApiOkResponse({ description: 'todo', type: Todo })
+  @ApiOkResponse({
+    description: 'The todo item has been successfully updated',
+    type: Todo,
+  })
+  @BadRequest('todo item')
+  @NotFound('todo item')
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
@@ -56,9 +73,13 @@ export class TodosController {
     return await this.todosService.update(id, req.user.username, updateTodoDto);
   }
 
-  @ApiOkResponse({ description: 'todo', type: Todo })
+  @ApiOkResponse({
+    description: 'The todo item has been successfully deleted',
+    type: Todo,
+  })
+  @NotFound('todo item')
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.todosService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.todosService.remove(id);
   }
 }
