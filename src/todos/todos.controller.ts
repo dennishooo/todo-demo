@@ -21,11 +21,13 @@ import { AuthRequest } from 'src/auth/entities/auth.entity';
 import { TodoQuery } from './dto/Todo-query.dto';
 import {
   BadRequest,
+  Forbidden,
   NotFound,
   Unauthorized,
 } from 'src/exception/exception.decorator';
 
 @Unauthorized()
+@UseGuards(JwtAuthGuard)
 @ApiTags('todos')
 @Controller('todos')
 export class TodosController {
@@ -37,7 +39,6 @@ export class TodosController {
   })
   @BadRequest('todo item')
   @NotFound('todo item')
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Req() req: AuthRequest, @Body() createTodoDto: CreateTodoDto) {
     createTodoDto.ownerId = req.user.userId;
@@ -61,16 +62,15 @@ export class TodosController {
     description: 'The todo item has been successfully updated',
     type: Todo,
   })
-  @BadRequest('todo item')
+  @Forbidden()
   @NotFound('todo item')
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
     @Req() req: AuthRequest,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTodoDto: UpdateTodoDto,
   ) {
-    return await this.todosService.update(id, req.user.username, updateTodoDto);
+    return await this.todosService.update(id, req.user.userId, updateTodoDto);
   }
 
   @ApiOkResponse({
@@ -78,8 +78,9 @@ export class TodosController {
     type: Todo,
   })
   @NotFound('todo item')
+  @Forbidden()
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    return await this.todosService.remove(id);
+  async remove(@Req() req: AuthRequest, @Param('id', ParseIntPipe) id: number) {
+    return await this.todosService.remove(id, req.user.userId);
   }
 }
