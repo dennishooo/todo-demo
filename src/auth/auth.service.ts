@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +20,8 @@ export class AuthService {
     const user = await this.usersService.findOne(username);
     if (!user) throw new NotFoundException('No user found');
     const isMatch = await bcrypt.compare(pass, user.password);
+    if (!isMatch)
+      throw new UnauthorizedException('Username/password incorrect');
     if (isMatch) {
       const { password, ...result } = user;
       return result;
