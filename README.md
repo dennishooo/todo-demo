@@ -1,12 +1,14 @@
 # To Do Demo Application
 
+## Environment Setup
+
 You have three different ways to set up and access the api server for this demo.
 
-## 1. Connecting to the deployed version
+### 1. Connecting to the deployed version
 
 Link: https://lfx-interview-backend-fjy5bjnqka-df.a.run.app/api
 
-## 2. Running in local environment
+### 2. Running in local environment
 
 **Prerequisite**
 
@@ -45,7 +47,7 @@ yarn start:dev
 4. Done
    Browse http://localhost:8080/api
 
-## 3. Running in docker environment
+### 3. Running in docker environment
 
 **Prerequisite**
 
@@ -64,3 +66,17 @@ docker build -t <image_name> .
 ```
 docker run -it --env-file=.env <image_id>
 ```
+
+## Server API
+
+| METHOD | ROUTE           | Auth Strategy |
+| ------ | --------------- | ------------- |
+| POST   | /auth/login     | Local         |
+| POST   | /user           | No            |
+| GET    | /user/:username | No            |
+| DELETE | /user           | JWT           |
+| PATCH  | /user/:id       | JWT           |
+| POST   | /todos          | JWT           |
+| GET    | /todos/:id      | JWT           |
+| DELETE | /todos          | JWT           |
+| PATCH  | /todos/:id      | JWT           |
