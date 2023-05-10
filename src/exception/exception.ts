@@ -33,9 +33,30 @@ export class SwaggerNotFoundException extends DefaultException {
   @ApiProperty({ default: 404 })
   statusCode: HttpStatus;
 
-  @ApiProperty({ default: 'No item found' })
+  @ApiProperty({ default: 'Nothing found' })
   message: any;
 
   @ApiProperty({ default: 'Not Found' })
   error: string;
+}
+
+export class SwaggerForbiddenException extends DefaultException {
+  @ApiProperty({ default: 403 })
+  statusCode: HttpStatus;
+
+  @ApiProperty({ default: 'User is not allowed to do such operation' })
+  message: any;
+
+  @ApiProperty({ default: 'Forbidden' })
+  error: string;
+}
+
+export class SwaggerConflictException extends DefaultException {
+  @ApiProperty({ default: 409 })
+  statusCode: HttpStatus;
+
+  @ApiProperty({
+    default: '[P2002]: Unique constraint failed on the fields: (`username`)',
+  })
+  message: any;
 }

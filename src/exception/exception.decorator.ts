@@ -1,12 +1,15 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
   SwaggerBadRequestException,
+  SwaggerConflictException,
+  SwaggerForbiddenException,
   SwaggerNotFoundException,
   SwaggerUnauthorizeException,
 } from './exception';
@@ -41,11 +44,30 @@ export function BadRequest(name: string) {
   );
 }
 
+export function Forbidden() {
+  return applyDecorators(
+    ApiConflictResponse({
+      description: `User is not allowed to do such operation`,
+      status: 403,
+      type: SwaggerForbiddenException,
+    }),
+  );
+}
+
+export function Conflict(name: string) {
+  return applyDecorators(
+    ApiConflictResponse({
+      description: `The ${name} has conflict with existing records`,
+      status: 409,
+      type: SwaggerConflictException,
+    }),
+  );
+}
+
 export function Ok<T>(name: string, type: () => T) {
   return applyDecorators(
     ApiOkResponse({
       description: `The ${name} item created successfully`,
-
       type,
     }),
   );
